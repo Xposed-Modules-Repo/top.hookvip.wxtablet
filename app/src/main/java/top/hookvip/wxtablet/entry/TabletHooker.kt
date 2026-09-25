@@ -42,9 +42,14 @@ object TabletHooker : YukiBaseHooker() {
                     }
 
                     WXConfig.apply {
-                        checkPadTablet?.hook {
-                            after {
-                                result = !Throwable().stackTraceToString().contains("com.tencent.mm.pluginsdk.ui.chat")
+                        unlockPadModeUi?.hook {
+                            before {
+                                result = true
+                            }
+                        }
+                        checkIsPadMode?.hook {
+                            before {
+                                result = true
                             }
                         }
                         visibleLoginButton?.hook {
@@ -79,7 +84,8 @@ object TabletHooker : YukiBaseHooker() {
             verCode = buildConfigClass.field { name = "VERSION_CODE" }.get().int()
             clientVer = buildConfigClass.field { name = "CLIENT_VERSION_ARM64" }.get().string()
         }
-        YLog.warn("checkPadTablet = ${WXConfig.checkPadTablet}")
+        YLog.warn("unlockPadModeUi = ${WXConfig.unlockPadModeUi}")
+        YLog.warn("checkIsPadMode = ${WXConfig.checkIsPadMode}")
         YLog.warn("visibleLoginButton = ${WXConfig.visibleLoginButton}")
         return true
     }

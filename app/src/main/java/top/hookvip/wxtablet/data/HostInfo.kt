@@ -21,4 +21,21 @@ object HostInfo {
             append(clientVer)
         }
     }
+
+    /** Compares [verName] to a dotted version such as 8.0.78. Unparseable names are older. */
+    fun isAtLeast(versionName: String): Boolean {
+        val current = versionNumbers(verName)
+        val target = versionNumbers(versionName)
+        if (current.size < 3 || target.size < 3) return false
+        for (index in 0 until 3) {
+            if (current[index] != target[index]) return current[index] > target[index]
+        }
+        return true
+    }
+
+    private fun versionNumbers(versionName: String): List<Int> {
+        return versionName.split('.').map { part ->
+            part.takeWhile { it.isDigit() }.toIntOrNull() ?: return emptyList()
+        }
+    }
 }
