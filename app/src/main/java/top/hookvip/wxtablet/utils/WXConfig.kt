@@ -22,7 +22,7 @@ object WXConfig {
         get() = config.getStringPut(MethodCheckPadTablet.mKey) {
             bridge.findMethod {
                 matcher {
-                    usingStrings("Lenovo TB-9707F")
+                    usingStrings("inTabletEnv, no tablet condition matched, return false")
                 }
             }.single().descriptor
         }?.toDexMethod()
