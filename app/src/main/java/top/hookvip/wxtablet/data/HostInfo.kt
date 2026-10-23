@@ -11,6 +11,7 @@ object HostInfo {
     var verName by Delegates.notNull<String>()
     var verCode by Delegates.notNull<Int>()
     var clientVer by Delegates.notNull<String>()
+    var canCacheMethods = false
 
     fun toVerStr(): String {
         return buildString {

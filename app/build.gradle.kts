@@ -63,5 +63,6 @@ dependencies {
     implementation(org.luckypray.dexkit)
     implementation(io.github.billywei01.fastkv)
     implementation(androidx.core.core.ktx)
+    testImplementation(junit.junit)
 }
 fun getReleaseCode() = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE).toInt()
