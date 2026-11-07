@@ -3,8 +3,6 @@ package top.hookvip.wxtablet.entry
 import android.content.Context
 import android.content.Intent
 import android.view.View
-import android.widget.Button
-import androidx.core.view.isGone
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.factory.field
 import com.highcapable.yukihookapi.hook.factory.method
@@ -41,19 +39,22 @@ object TabletHooker : YukiBaseHooker() {
                         }
                     }
 
-                    WXConfig.apply {
-                        checkPadTablet?.hook {
+                    val (tabletChecks, loginButtons) = WXConfig.find(classloader)
+                    YLog.warn("checkPadTablet = ${tabletChecks.joinToString()}")
+                    YLog.warn("visibleLoginButton = ${loginButtons.joinToString()}")
+
+                    tabletChecks.forEach { check ->
+                        check.hook {
                             after {
-                                result = !Throwable().stackTraceToString().contains("com.tencent.mm.pluginsdk.ui.chat")
+                                // 保留原方法的初始化。
+                                result = WXConfig.tabletResult(Throwable().stackTrace)
                             }
                         }
-                        visibleLoginButton?.hook {
-                            before {
-                                args(0).cast<Button>()?.let { loginButton ->
-                                    if (loginButton.isGone) {
-                                        loginButton.visibility = View.VISIBLE
-                                    }
-                                }
+                    }
+                    loginButtons.forEach { buttonMethod ->
+                        buttonMethod.hook {
+                            after {
+                                args(0).cast<View>()?.visibility = View.VISIBLE
                             }
                         }
                     }
@@ -79,8 +80,6 @@ object TabletHooker : YukiBaseHooker() {
             verCode = buildConfigClass.field { name = "VERSION_CODE" }.get().int()
             clientVer = buildConfigClass.field { name = "CLIENT_VERSION_ARM64" }.get().string()
         }
-        YLog.warn("checkPadTablet = ${WXConfig.checkPadTablet}")
-        YLog.warn("visibleLoginButton = ${WXConfig.visibleLoginButton}")
         return true
     }
 }
